@@ -1,19 +1,18 @@
 #pragma once
-#include "FS.h"
-class NTFS :
+#include "FileSystems/BaseFS/FS.h"
+class HFSP :
 	public FS
 {
 private:
 #pragma pack(push, 1)
 	typedef struct {
-		unsigned char Padding1[10];
-		unsigned char sectorSize[2];
-		unsigned char clasterSize[1];
+		DWORD Padding1[11];
+		DWORD sectorSize[2];
+		DWORD clasterSize[1];
 	} BootRecord;
 #pragma pack(pop)
 protected:
 	// В разных ФС различается только процесс получения размера кластера
 	bool ReadClusterSize();
-
 };
 

@@ -105,6 +105,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,21 +129,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="EFAT.cpp" />
-    <ClCompile Include="FAT16.cpp" />
-    <ClCompile Include="FileSystemCreator.cpp" />
-    <ClCompile Include="FS.cpp" />
-    <ClCompile Include="HFS+.cpp" />
+    <ClCompile Include="./FileSystems/ExFAT/EFAT.cpp" />
+    <ClCompile Include="./FileSystems/FAT16/FAT16.cpp" />
+    <ClCompile Include="./FileSystems/BaseFS/FS.cpp" />
+    <ClCompile Include="./FileSystems/HFS+/HFS+.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="NTFS.cpp" />
+    <ClCompile Include="./FABRIC/MyFSC/MyFSC.cpp" />
+    <ClCompile Include="./FileSystems/NTFS/NTFS.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EFAT.h" />
-    <ClInclude Include="FAT16.h" />
-    <ClInclude Include="FileSystemCreator.h" />
-    <ClInclude Include="FS.h" />
-    <ClInclude Include="HFS+.h" />
-    <ClInclude Include="NTFS.h" />
+    <ClInclude Include="./FileSystems/ExFAT/EFAT.h" />
+    <ClInclude Include="./FileSystems/FAT16/FAT16.h" />
+    <ClInclude Include="./FABRIC/BaseClass/FileSystemCreator.h" />
+    <ClInclude Include="./FileSystems/BaseFS/FS.h" />
+    <ClInclude Include="./FileSystems/HFS+/HFS+.h" />
+    <ClInclude Include="./FABRIC/MyFSC/MyFSC.h" />
+    <ClInclude Include="./FileSystems/NTFS/NTFS.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

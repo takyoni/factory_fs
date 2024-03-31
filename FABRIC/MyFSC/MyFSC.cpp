@@ -1,32 +1,32 @@
-#include "FileSystemCreator.h"
-#include "Windows.h"
-#include "FS.h"
-#include "NTFS.h"
-#include "FAT16.h"
-#include "EFAT.h"
-#include "HFS+.h"
+#include "FABRIC/MyFSC/MyFSC.h"
+#include "FABRIC/BaseClass/FileSystemCreator.h"
+#include "FileSystems/NTFS/NTFS.h"
+#include "FileSystems/FAT16/FAT16.h"
+#include "FileSystems/ExFAT/EFAT.h"
+#include "FileSystems/HFS+/HFS+.h"
 #include <stdexcept>
-FS* FileSystemCreator::CreateFileSystem(FSEnum fsType, LPCWSTR path)
+
+FS* MyFSC::CreateFileSystem(FSEnum fsType, LPCWSTR device)
 {
 	switch (fsType) {
 	case FSEnum::NTFS: {
 		NTFS* fs = new NTFS();
-		fs->Init(path);
+		fs->Init(device);
 		return fs;
 	}
 	case FSEnum::FAT16: {
 		FAT16* fs = new FAT16();
-		fs->Init(path);
+		fs->Init(device);
 		return fs;
 	}
 	case FSEnum::ExFAT: {
 		EFAT* fs = new EFAT();
-		fs->Init(path);
+		fs->Init(device);
 		return fs;
 	}
 	case FSEnum::HFSp: {
 		HFSP* fs = new HFSP();
-		fs->Init(path);
+		fs->Init(device);
 		return fs;
 	}
 	default:
@@ -34,4 +34,3 @@ FS* FileSystemCreator::CreateFileSystem(FSEnum fsType, LPCWSTR path)
 		return NULL;
 	}
 }
-

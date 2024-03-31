@@ -1,12 +1,13 @@
 ﻿#include <iostream>
-#include "FS.h"
-#include "NTFS.h"
-#include "FAT16.h"
-#include "EFAT.h"
-#include "HFS+.h"
+#include "FileSystems/BaseFS/FS.h"
+#include "FileSystems/NTFS/NTFS.h"
+#include "FileSystems/FAT16/FAT16.h"
+#include "FileSystems/ExFAT/EFAT.h"
+#include "FileSystems/HFS+/HFS+.h"
 #include "windows.h"
 #include <iomanip>
-#include "FileSystemCreator.h"
+#include "FABRIC/MyFSC/MyFSC.h"
+#include "FABRIC/BaseClass/FileSystemCreator.h"
 using namespace std;
 
 void hexdump(const BYTE* array, unsigned int length, unsigned int offset) {
@@ -40,9 +41,9 @@ void hexdump(const BYTE* array, unsigned int length, unsigned int offset) {
         std::cout << std::endl;
     }
 }
-FSEnum DetectFS(LPCWSTR filename) {
+FSEnum DetectFS(LPCWSTR device) {
     HANDLE fileHandler = CreateFileW(
-        filename,    // Drive to open
+        device,    // Drive to open
         GENERIC_READ,           // Access mode
         FILE_SHARE_READ | FILE_SHARE_WRITE,        // Share Mode
         NULL,                   // Security Descriptor
@@ -54,136 +55,57 @@ FSEnum DetectFS(LPCWSTR filename) {
     {
         throw std::invalid_argument("Error INVALID_HANDLE_VALUE!");
     }
-
-    BYTE sector[512];
     DWORD bytesRead;
-    DWORD bytesToRead = sizeof(sector);
+    BYTE buffer[2048];
+    // Читаем первые 2048 байт
+    if (!ReadFile(fileHandler, buffer, sizeof(buffer), &bytesRead, nullptr)) {
+        throw "Error reading volume\n";
+    }
 
-    LARGE_INTEGER sectorSizeOffset;
-    sectorSizeOffset.QuadPart = 0;
-
-    if (!SetFilePointerEx(fileHandler, sectorSizeOffset, NULL, FILE_BEGIN)) {
-        throw std::invalid_argument("Set FilePointer error");
-        CloseHandle(fileHandler);
+    // Проверяем сигнатуру NTFS
+    BYTE ntfsSignature[] = { 0x4E, 0x54, 0x46, 0x53 };
+    if (memcmp(buffer + 3, ntfsSignature, sizeof(ntfsSignature)) == 0) {
+        return FSEnum::NTFS;
     }
-    if (!ReadFile(fileHandler, sector, bytesToRead, &bytesRead, NULL))
-    {
-        throw std::invalid_argument("ReadFile error");
-        CloseHandle(fileHandler);
+    // Проверяем сигнатуру FAT16
+    BYTE fat16Signature[] = { 0x1C, 0xEB, 0x52, 0x90 };
+    if (memcmp(buffer + 11, fat16Signature, sizeof(fat16Signature)) == 0) {
+        return FSEnum::FAT16;
     }
-    switch (fsType) {
-    case FSEnum::NTFS: {
-        NTFS* fs = new NTFS();
-        fs->Init(path);
-        return fs;
+    // Проверяем сигнатуру ExFAT
+    BYTE exfatSignature[] = { 0x45, 0x78, 0x46, 0x41, 0x54 };
+    if (memcmp(buffer + 3, exfatSignature, sizeof(exfatSignature)) == 0) {
+        return FSEnum::ExFAT;
     }
-    case FSEnum::FAT16: {
-        FAT16* fs = new FAT16();
-        fs->Init(path);
-        return fs;
+    // Проверяем сигнатуру HFS+
+    BYTE hfsPlusSignature[] = { 0x48, 0x2B, 0x0E, 0x0E };
+    if (memcmp(buffer + 1024, hfsPlusSignature, sizeof(hfsPlusSignature)) == 0) {
+        return FSEnum::HFSp;
     }
-    case FSEnum::ExFAT: {
-        EFAT* fs = new EFAT();
-        fs->Init(path);
-        return fs;
-    }
-    case FSEnum::HFSp: {
-        HFSP* fs = new HFSP();
-        fs->Init(path);
-        return fs;
-    }
-    default:
-        throw std::invalid_argument("Set FilePointer error");
-        return NULL;
-    }
-    return true;
+    throw "Cannot detect fs!";
 }
 int main()
 {
 
     // NTFS
-    /*NTFS fileSystem;
-
-    if (!fileSystem.Init(L"\\\\.\\C:")) {
+    FileSystemCreator* fsCreator = new MyFSC;
+    FSEnum fsType = DetectFS(L"\\\\.\\C:");
+    FS* fs = fsCreator->CreateFileSystem(fsType, L"\\\\.\\C:");
+    if (!fs->Init(L"\\\\.\\C:")) {
         cout << "Init: " << GetLastError();
         return false;
     };
-    unsigned int clusterSize = fileSystem.ClusterSize();
+    unsigned int clusterSize = fs->ClusterSize();
     unsigned int clusterNumber = 5;
     BYTE * cluster = new BYTE[clusterSize];
 
-    if (!fileSystem.ReadCluster(clusterNumber, cluster)) {
-        cout << "Read cluster error: " << GetLastError();
-        return false;
-    };
-
-    hexdump(cluster, clusterSize, clusterNumber * clusterSize);
-    cout << "Cluster size per bytes: " << dec << clusterSize << endl;*/
-
-    // FAT16
-    /*
-    FAT16 fileSystem;
-
-    if (!fileSystem.Init(L"\\\\.\\E:")) {
-        cout << "Init: " << GetLastError();
-        return false;
-    };
-    unsigned int clusterSize = fileSystem.ClusterSize();
-    unsigned int clusterNumber = 0;
-    BYTE* cluster = new BYTE[clusterSize];
-
-    if (!fileSystem.ReadCluster(clusterNumber, cluster)) {
-        cout << "Read cluster error: " << GetLastError();
-        return false;
-    };
-
-    cout << "Read cluster result: " << endl;
-    hexdump(cluster, clusterSize, clusterNumber * clusterSize);
-    cout << "Cluster size per bytes: " << dec << clusterSize << endl;
-    */
-
-    // EFAT
-    /*
-    EFAT fileSystem;
-
-    if (!fileSystem.Init(L"\\\\.\\G:")) {
-        cout << "Init: " << GetLastError();
-        return false;
-    };
-    unsigned int clusterSize = fileSystem.ClusterSize();
-    unsigned int clusterNumber = 0;
-    BYTE* cluster = new BYTE[clusterSize];
-
-    if (!fileSystem.ReadCluster(clusterNumber, cluster)) {
-        cout << "Read cluster error: " << GetLastError();
-        return false;
-    };
-
-    hexdump(cluster, clusterSize, clusterNumber * clusterSize);
-    
-    cout << "\nCluster size per bytes: " << dec << clusterSize << endl;
-    */
-    
-    // HFS+
-    /*
-    HFSP fileSystem;
-
-    if (!fileSystem.Init(L"\\\\.\\F:")) {
-        cout << "Init: " << GetLastError();
-        return false;
-    };
-    unsigned int clusterSize = fileSystem.ClusterSize();
-    unsigned int clusterNumber = 0;
-    BYTE * cluster = new BYTE[clusterSize];
-
-    if (!fileSystem.ReadCluster(clusterNumber, cluster)) {
+    if (!fs->ReadCluster(clusterNumber, cluster)) {
         cout << "Read cluster error: " << GetLastError();
         return false;
     };
 
     hexdump(cluster, clusterSize, clusterNumber * clusterSize);
     cout << "Cluster size per bytes: " << dec << clusterSize << endl;
-    */
 
     delete[] cluster;
 }

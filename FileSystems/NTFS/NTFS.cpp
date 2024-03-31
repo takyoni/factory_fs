@@ -25,11 +25,8 @@ bool NTFS::ReadClusterSize()
         return false;
     }
     BootRecord* pBootRecord = reinterpret_cast<BootRecord*>(sector);
-    unsigned int value;
-    std::memcpy(&value, pBootRecord->sectorSize, sizeof(unsigned int));
-    unsigned int countSectors = static_cast<unsigned int>(sector[13]);
-    unsigned int sectorSize = (sector[12] << 8) | sector[11];
- //   unsigned int countSectors = static_cast<unsigned int>(sector[13]);
+    unsigned int countSectors = static_cast<unsigned int>(pBootRecord->sectorsPerCluster);
+    unsigned int sectorSize = static_cast<unsigned int>(pBootRecord->bytesPerSector);
     clusterSize = sectorSize * countSectors;
     return true;
 }

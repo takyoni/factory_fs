@@ -18,42 +18,45 @@
     <ClCompile Include="main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="FS.cpp">
+    <ClCompile Include="./FileSystems/BaseFS/FS.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="NTFS.cpp">
+    <ClCompile Include="./FileSystems/NTFS/NTFS.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="FAT16.cpp">
+    <ClCompile Include="./FileSystems/FAT16/FAT16.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="HFS+.cpp">
+    <ClCompile Include="./FileSystems/HFS+/HFS+.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="EFAT.cpp">
+    <ClCompile Include="./FileSystems/ExFAT/EFAT.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="FileSystemCreator.cpp">
+    <ClCompile Include="./FABRIC/MyFSC/MyFSC.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FS.h">
+    <ClInclude Include="./FileSystems/BaseFS/FS.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="NTFS.h">
+    <ClInclude Include="./FileSystems/NTFS/NTFS.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="FAT16.h">
+    <ClInclude Include="./FileSystems/FAT16/FAT16.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="HFS+.h">
+    <ClInclude Include="./FileSystems/HFS+/HFS+.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="EFAT.h">
+    <ClInclude Include="./FileSystems/ExFAT/EFAT.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="FileSystemCreator.h">
+    <ClInclude Include="./FABRIC/BaseClass/FileSystemCreator.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="./FABRIC/MyFSC/MyFSC.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
