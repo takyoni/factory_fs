@@ -1,5 +1,5 @@
 #pragma once
-#include "FileSystems/BaseFS/FS.h"
+#include "FS.h"
 class EFAT :
 	public FS
 {

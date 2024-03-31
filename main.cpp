@@ -1,13 +1,13 @@
 ﻿#include <iostream>
-#include "FileSystems/BaseFS/FS.h"
-#include "FileSystems/NTFS/NTFS.h"
-#include "FileSystems/FAT16/FAT16.h"
-#include "FileSystems/ExFAT/EFAT.h"
-#include "FileSystems/HFS+/HFS+.h"
+#include "FS.h"
+#include "NTFS.h"
+#include "FAT16.h"
+#include "EFAT.h"
+#include "HFS+.h"
 #include "windows.h"
 #include <iomanip>
-#include "FABRIC/MyFSC/MyFSC.h"
-#include "FABRIC/BaseClass/FileSystemCreator.h"
+#include "MyFSC.h"
+#include "FileSystemCreator.h"
 using namespace std;
 
 void hexdump(const BYTE* array, unsigned int length, unsigned int offset) {
